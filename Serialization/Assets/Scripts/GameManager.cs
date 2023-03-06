@@ -10,199 +10,141 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 
-public class GameManager : MonoBehaviour, ISerializable
+public class GameManager : MonoBehaviour
 {
-    public Button saveJson;
-    public Button loadJson;
-    public Button saveXml;
-    public Button loadXml;
-    public Button saveBinary;
-    public Button loadBinary;
-    public Button createNewSet;
+    public Button saveJson, loadJson, saveXml, loadXml, saveBinary, loadBinary, createNewSet;
 
     List<ObjectDataManager> objectList;
 
-    [SerializeField]private int numberOfObjects = 0;
-    private float minSpawnDistance = 2f;
-    private float maxSpawnDistance = 25f;
+    #region object spawn stats
+    [SerializeField] private int numberOfObjects = 0;
+    private float minSpawnWidth = 2f;
+    private float maxSpawnWidth = 25f;
     private float spawnHeight = 25f;
+    private float angleRange = 360f;
+    private Vector2 spawnHeightMultiplierRange = new Vector2(0.5f, 1.5f);
+    private Vector2 fallSpeedRange = new Vector2(0.5f, 5f);
+    Vector2Int shapeRange = new Vector2Int(0, 3);
+    #endregion
 
     string filePathJSON;
-    string directoryPathJson;
-
     string filePathXML;
-    string directoryPathXML;
-
     string filePathBinary;
-    string directoryPathBinary;
 
     private void Awake()
     {
         objectList = new List<ObjectDataManager>();
 
-        directoryPathJson = Path.Combine(Application.streamingAssetsPath, "JsonExamples/");
-        directoryPathXML = Path.Combine(Application.streamingAssetsPath, "XML/");
-        directoryPathBinary = Path.Combine(Application.streamingAssetsPath, "Binary/");
-
-        if (!Directory.Exists(directoryPathJson)) 
-            Directory.CreateDirectory(directoryPathJson);
-        if (!Directory.Exists(directoryPathXML))
-            Directory.CreateDirectory(directoryPathXML);
-        if (!Directory.Exists(directoryPathBinary))
-            Directory.CreateDirectory(directoryPathBinary);
-
-        filePathJSON = Path.Combine(directoryPathJson, "saveFile.txt");
-        filePathBinary = Path.Combine(directoryPathXML, "bfexample");
-        filePathXML = Path.Combine(directoryPathBinary, "saveFile.xml");
+        filePathJSON = GeneratePath("JsonExamples/", "saveFile.txt");
+        filePathXML = GeneratePath("XML/", "saveFile.xml");
+        filePathBinary = GeneratePath("Binary/", "bfexample");
     }
 
     private void Start()
     {
-        saveJson.onClick.AddListener(() => {
-            SaveJSon<ListWrapper>(new ListWrapper { dataList = (objectList.FromTtoG((val) => { return val.objData; })).ToList<ObjectDataManager.ObjectData>()}); 
-        });
-        loadJson.onClick.AddListener(() => {
-            ClearList();
-            LoadList(LoadJson<ListWrapper>());
-        });
-
-        saveXml.onClick.AddListener(() => {
-            SaveXML<ListWrapper>(new ListWrapper { dataList = (objectList.FromTtoG((val) => { return val.objData; })).ToList<ObjectDataManager.ObjectData>() });
-        });
-        loadXml.onClick.AddListener(() => {
-            ClearList();
-            LoadList(LoadXML<ListWrapper>());
-        });
-
-        saveBinary.onClick.AddListener(() => {
-            SaveBinary<ListWrapper>(new ListWrapper { dataList = (objectList.FromTtoG((val) => { return val.objData; })).ToList<ObjectDataManager.ObjectData>() });
-        });
-        loadBinary.onClick.AddListener(() => {
-            ClearList();
-            LoadList(LoadBinary<ListWrapper>());
-        });
-
-        createNewSet.onClick.AddListener(() => { GenerateNewSet(); });
+        SetButtonsEvents();
     }
 
-    private void Update()
+    public void SetButtonsEvents()
     {
-    }
-
-    private ObjectDataManager.ObjectData SetObjData(ObjectDataManager.ObjectData data)
-    {
-        if (data == null)
+        //JSON
+        saveJson.onClick.AddListener(() =>
+            Serializer.Instance.Save(type: Serializer.SerializationType.JSON, toSave: GetWrappedList(), filePath: filePathJSON)
+        );
+        loadJson.onClick.AddListener(() =>
         {
-            Vector2 randPos = Random.insideUnitCircle;
-            randPos.Normalize();
-            randPos *= Random.Range(minSpawnDistance, maxSpawnDistance);
-            data = new ObjectDataManager.ObjectData(Random.Range(0, 3), new ObjectDataManager.Vector3Wrapper(randPos.x, spawnHeight * Random.Range(0.5f, 1.5f), randPos.y), new ObjectDataManager.Vector3Wrapper(0, 0, 0), new ObjectDataManager.Vector3Wrapper(0, -1, 0));
+            objectList.ClearListMonobehaviours();
+            ListWrapper newList = Serializer.Instance.Load<ListWrapper>(type: Serializer.SerializationType.JSON, filePath: filePathJSON);
+            LoadList(newList);
+        });
+
+        //XML
+        saveXml.onClick.AddListener(() =>
+            Serializer.Instance.Save(type: Serializer.SerializationType.XML, toSave: GetWrappedList(), filePath: filePathXML)
+        );
+        loadXml.onClick.AddListener(() =>
+        {
+            objectList.ClearListMonobehaviours();
+            ListWrapper newList = Serializer.Instance.Load<ListWrapper>(type: Serializer.SerializationType.XML, filePath: filePathXML);
+            LoadList(newList);
+        });
+
+        //BINARY
+        saveBinary.onClick.AddListener(() =>
+            Serializer.Instance.Save(type: Serializer.SerializationType.BINARY, toSave: GetWrappedList(), filePath: filePathBinary)
+        );
+        loadBinary.onClick.AddListener(() =>
+        {
+            objectList.ClearListMonobehaviours();
+            ListWrapper newList = Serializer.Instance.Load<ListWrapper>(type: Serializer.SerializationType.BINARY, filePath: filePathBinary);
+            LoadList(newList);
+        });
+
+        //OTHER
+        createNewSet.onClick.AddListener(() => LoadList());
+    }
+
+    private ListWrapper GetWrappedList()
+    {
+        return new ListWrapper { dataList = (objectList.FromTtoG((val) => { return val.objData; })).ToList() };
+    }
+
+    private string GeneratePath(string folderName, string fileName)
+    {
+        string directoryPath = Path.Combine(Application.streamingAssetsPath, folderName);
+
+        if (!Directory.Exists(directoryPath))
+            Directory.CreateDirectory(directoryPath);
+
+        return Path.Combine(directoryPath, fileName);
+    }
+
+    private void InitObject(ObjectDataManager.ObjectData objData)
+    {
+        if (objData == null)
+        {
+            objData = GenerateNewData();
         }
 
-        return data;
+        GameObject newObj = GameObject.CreatePrimitive((PrimitiveType)objData.shape);
+        newObj.AddComponent<ObjectDataManager>().Init(objData);
+        objectList.Add(newObj.GetComponent<ObjectDataManager>());
     }
 
-    private void Init(ObjectDataManager.ObjectData objData)
+    private ObjectDataManager.ObjectData GenerateNewData()
     {
-        GameObject newObj = GameObject.CreatePrimitive((PrimitiveType)objData.shape);
-        newObj.transform.position = objData.position.Unwrap();
-        newObj.transform.eulerAngles = objData.rotation.Unwrap();
+        ObjectDataManager.ObjectData objData;
 
-        Rigidbody rb = newObj.AddComponent<Rigidbody>();
-        rb.useGravity = false;
-        rb.velocity = objData.velocity.Unwrap();
+        Vector2 rand = Random.insideUnitCircle.normalized * Random.Range(minSpawnWidth, maxSpawnWidth);
+        Vector3 randomPosition = new Vector3(rand.x, spawnHeight * Random.Range(spawnHeightMultiplierRange.x, spawnHeightMultiplierRange.y), rand.y);
+        Vector3 randomAngle = new Vector3(Random.Range(-angleRange, angleRange), Random.Range(-angleRange, angleRange), Random.Range(-angleRange, angleRange));
+        Vector3 randomVelocity = -Vector3.up * Random.Range(fallSpeedRange.x, fallSpeedRange.y);
 
-        newObj.AddComponent<ObjectDataManager>().objData = objData;
-        objectList.Add(newObj.GetComponent<ObjectDataManager>());
+        objData = new ObjectDataManager.ObjectData(_shape: Random.Range(shapeRange.x, shapeRange.y),
+                                                   _position: new ObjectDataManager.Vector3Wrapper(randomPosition),
+                                                   _rotation: new ObjectDataManager.Vector3Wrapper(randomAngle),
+                                                   _velocity: new ObjectDataManager.Vector3Wrapper(randomVelocity)
+        );
+
+        return objData;
     }
 
     private void GeneratePrimitive(ObjectDataManager.ObjectData data = null)
     {
-        Init(SetObjData(data));
+        InitObject(data);
     }
 
-    private void GenerateNewSet()
+    private void LoadList(ListWrapper wrapper = null)
     {
-        ClearList();
+        objectList.ClearListMonobehaviours();
 
-        for (int i = 0; i < numberOfObjects; i++)
-        {
-            GeneratePrimitive();
-        }
-    }
-
-    private void ClearList()
-    {
-        for (int i = 0; i < objectList.Count; i++)
-        {
-            Destroy(objectList[i].gameObject);
-        }
-
-        objectList.Clear();
-    }
-
-    private void LoadList(ListWrapper wrapper)
-    {
-        if(wrapper != null)
-        {
+        if (wrapper == null)
+            for (int i = 0; i < numberOfObjects; i++)
+                GeneratePrimitive();
+        else
             for (int i = 0; i < wrapper.dataList.Count; i++)
-            {
                 GeneratePrimitive(wrapper.dataList[i]);
-            }
-        }
-    }
 
-    public void SaveJSon<T>(T toSave)
-    {
-        string jsonSerializationOfNewClass = JsonUtility.ToJson(toSave);
-        File.WriteAllText(filePathJSON, jsonSerializationOfNewClass);
-    }
-
-    public T LoadJson<T>()
-    {
-        string jsonDeserialized = File.ReadAllText(filePathJSON);
-        T newClassLoadedFromJson = JsonUtility.FromJson<T>(jsonDeserialized);
-
-        return newClassLoadedFromJson == null ? default(T) : newClassLoadedFromJson;
-    }
-
-    public void SaveXML<T>(T toSave)
-    {
-        var serializer = new XmlSerializer(typeof(T));
-        using (var stream = new FileStream(filePathXML, FileMode.Create))
-        {
-            serializer.Serialize(stream, toSave);
-        }
-    }
-
-    public T LoadXML<T>()
-    {
-        var serializer = new XmlSerializer(typeof(T));
-        using (var stream = new FileStream(filePathXML, FileMode.Open))
-        {
-            return (T)serializer.Deserialize(stream) ?? default(T);
-        }
-    }
-
-    public void SaveBinary<T>(T toSave)
-    {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(filePathBinary);
-        bf.Serialize(file, toSave);
-        file.Close();
-    }
-
-    public T LoadBinary<T>()
-    {
-        T toRet = default(T);
-        if (File.Exists(filePathBinary))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(filePathBinary, FileMode.Open);
-            toRet = (T)bf.Deserialize(file);
-            file.Close();
-        }
-        return toRet == null ? default(T) : toRet;
     }
 
     [System.Serializable, XmlRoot("DataCollection")]

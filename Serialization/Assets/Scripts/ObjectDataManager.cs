@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ObjectDataManager : MonoBehaviour
 {
-    public ObjectData objData;
+    public ObjectData objData { get; set; }
     public Rigidbody rb;
 
     public void Start()
@@ -17,6 +17,18 @@ public class ObjectDataManager : MonoBehaviour
     private void Update()
     {
         UpdateData();
+    }
+
+    public void Init(ObjectData data)
+    {
+        objData = data;
+
+        transform.position = objData.position.Unwrap();
+        transform.eulerAngles = objData.rotation.Unwrap();
+
+        Rigidbody rb = gameObject.AddComponent<Rigidbody>();
+        rb.useGravity = false;
+        rb.velocity = objData.velocity.Unwrap();
     }
 
     public void UpdateData()

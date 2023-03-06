@@ -4,10 +4,10 @@ using UnityEngine;
 
 public interface ISerializable
 {
-    public void SaveJSon<T>(T toSave);
-    public T LoadJson<T>();
-    public void SaveXML<T>(T toSave);
-    public T LoadXML<T>();
-    public void SaveBinary<T>(T toSave);
-    public T LoadBinary<T>();
+    public void SaveJSon<T>(T toSave, string filePath);
+    public T LoadJson<T>(string filePath);
+    public void SaveXML<T>(T toSave, string filePath);
+    public T LoadXML<T>(string filePath);
+    public void SaveBinary<T>(T toSave, string filePath);
+    public T LoadBinary<T>(string filePath);
 }
