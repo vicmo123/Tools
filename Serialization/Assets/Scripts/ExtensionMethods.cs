@@ -30,4 +30,13 @@ public static class ExtensionMethods
     {
         return new GameManager.ListWrapper { dataList = (objectList.FromTtoG((val) => { return val.objData; })).ToList() };
     }
+
+    public static string[] SplitCamelCase(this string text)
+    {
+        string[] words = System.Text.RegularExpressions.Regex.Matches(text, "(^[a-z]+|[A-Z]+(?![a-z])|[A-Z][a-z]+)")
+            .OfType<System.Text.RegularExpressions.Match>()
+            .Select(m => m.Value)
+            .ToArray();
+        return words;
+    }
 }
