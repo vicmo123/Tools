@@ -2,146 +2,146 @@
 <DataCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <DataList>
     <ObjectData>
+      <shape>0</shape>
+      <position>
+        <x>-1.59436786</x>
+        <y>0.5000002</y>
+        <z>-16.2113</z>
+      </position>
+      <rotation>
+        <x>37.08225</x>
+        <y>159.024353</y>
+        <z>248.135849</z>
+      </rotation>
+      <velocity>
+        <x>0</x>
+        <y>0</y>
+        <z>0</z>
+      </velocity>
+    </ObjectData>
+    <ObjectData>
       <shape>1</shape>
       <position>
-        <x>-13.7163668</x>
-        <y>17.47956</y>
-        <z>4.38002634</z>
+        <x>7.5757103</x>
+        <y>3.68764377</y>
+        <z>11.6394567</z>
       </position>
       <rotation>
-        <x>61.00001</x>
-        <y>118.999985</y>
-        <z>325</z>
+        <x>82.15353</x>
+        <y>62.221035</y>
+        <z>201.428238</z>
       </rotation>
       <velocity>
         <x>0</x>
-        <y>-0.9913192</y>
-        <z>0</z>
-      </velocity>
-    </ObjectData>
-    <ObjectData>
-      <shape>0</shape>
-      <position>
-        <x>-7.24567652</x>
-        <y>15.8706656</y>
-        <z>-10.9098425</z>
-      </position>
-      <rotation>
-        <x>347</x>
-        <y>235</y>
-        <z>282</z>
-      </rotation>
-      <velocity>
-        <x>0</x>
-        <y>-1.48413789</y>
-        <z>0</z>
-      </velocity>
-    </ObjectData>
-    <ObjectData>
-      <shape>0</shape>
-      <position>
-        <x>14.4434948</x>
-        <y>19.0270443</y>
-        <z>12.0883255</z>
-      </position>
-      <rotation>
-        <x>271.999969</x>
-        <y>274.000031</y>
-        <z>348.999939</z>
-      </rotation>
-      <velocity>
-        <x>0</x>
-        <y>-1.71623075</y>
+        <y>-2.58528113</y>
         <z>0</z>
       </velocity>
     </ObjectData>
     <ObjectData>
       <shape>2</shape>
       <position>
-        <x>1.6366446</x>
-        <y>27.0414276</y>
-        <z>-21.6283855</z>
+        <x>0.0120417308</x>
+        <y>14.5332832</y>
+        <z>3.720603</z>
       </position>
       <rotation>
-        <x>75.0000153</x>
-        <y>251.999985</y>
-        <z>333</z>
+        <x>46.3074951</x>
+        <y>182.2926</y>
+        <z>138.217178</z>
       </rotation>
       <velocity>
         <x>0</x>
-        <y>-1.87890267</y>
-        <z>0</z>
-      </velocity>
-    </ObjectData>
-    <ObjectData>
-      <shape>1</shape>
-      <position>
-        <x>-4.162344</x>
-        <y>28.7777748</y>
-        <z>-0.5564852</z>
-      </position>
-      <rotation>
-        <x>356</x>
-        <y>30.9999962</y>
-        <z>166</z>
-      </rotation>
-      <velocity>
-        <x>0</x>
-        <y>-1.75982022</y>
+        <y>-0.575148</y>
         <z>0</z>
       </velocity>
     </ObjectData>
     <ObjectData>
       <shape>2</shape>
       <position>
-        <x>16.39657</x>
-        <y>5.51456738</y>
-        <z>14.068553</z>
+        <x>-6.571865</x>
+        <y>10.2397861</y>
+        <z>13.9507561</z>
       </position>
       <rotation>
-        <x>35</x>
-        <y>212</y>
-        <z>277</z>
+        <x>335.105774</x>
+        <y>294.637634</y>
+        <z>97.1341553</z>
       </rotation>
       <velocity>
         <x>0</x>
-        <y>-1.94216061</y>
+        <y>-2.84408736</y>
+        <z>0</z>
+      </velocity>
+    </ObjectData>
+    <ObjectData>
+      <shape>2</shape>
+      <position>
+        <x>9.378509</x>
+        <y>0.5987522</y>
+        <z>0.751486242</z>
+      </position>
+      <rotation>
+        <x>76.81015</x>
+        <y>167.45134</y>
+        <z>63.3528328</z>
+      </rotation>
+      <velocity>
+        <x>-0.03290242</x>
+        <y>0.0742000341</y>
+        <z>0.0114696324</z>
+      </velocity>
+    </ObjectData>
+    <ObjectData>
+      <shape>2</shape>
+      <position>
+        <x>-17.114624</x>
+        <y>1.90553176</y>
+        <z>4.692692</z>
+      </position>
+      <rotation>
+        <x>343.7013</x>
+        <y>322.529419</y>
+        <z>73.4537659</z>
+      </rotation>
+      <velocity>
+        <x>0</x>
+        <y>-2.1911025</y>
         <z>0</z>
       </velocity>
     </ObjectData>
     <ObjectData>
       <shape>1</shape>
       <position>
-        <x>-6.97935247</x>
-        <y>6.700279</y>
-        <z>-13.8374739</z>
+        <x>-22.7486763</x>
+        <y>14.476963</y>
+        <z>-3.04773617</z>
       </position>
       <rotation>
-        <x>293</x>
-        <y>71.99999</y>
-        <z>202.999985</z>
+        <x>87.62463</x>
+        <y>110.424492</y>
+        <z>140.353851</z>
       </rotation>
       <velocity>
         <x>0</x>
-        <y>-2.14344025</y>
+        <y>-1.66473186</y>
         <z>0</z>
       </velocity>
     </ObjectData>
     <ObjectData>
       <shape>0</shape>
       <position>
-        <x>3.55280614</x>
-        <y>6.965744</y>
-        <z>7.72889376</z>
+        <x>3.55218434</x>
+        <y>0.50000006</y>
+        <z>0.351073951</z>
       </position>
       <rotation>
-        <x>298.999969</x>
-        <y>298</y>
-        <z>31.0000057</z>
+        <x>52.386673</x>
+        <y>6.08254671</y>
+        <z>20.9916058</z>
       </rotation>
       <velocity>
         <x>0</x>
-        <y>-1.92842317</y>
+        <y>0</y>
         <z>0</z>
       </velocity>
     </ObjectData>

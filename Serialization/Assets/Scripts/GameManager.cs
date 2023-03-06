@@ -9,10 +9,13 @@ using Random = UnityEngine.Random;
 using System;
 using UnityEngine.UI;
 using System.Linq;
+using System.Reflection;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
-    public Button saveJson, loadJson, saveXml, loadXml, saveBinary, loadBinary, createNewSet;
+    public Button[] buttons;
+    public Action SaveJson, LoadJson, SaveXml, LoadXml, SaveBinary, LoadBinary, CreateNewSet;
 
     List<ObjectDataManager> objectList;
 
@@ -42,51 +45,60 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SetButtonsEvents();
-    }
-
-    public void SetButtonsEvents()
-    {
         //JSON
-        saveJson.onClick.AddListener(() =>
-            Serializer.Instance.Save(type: Serializer.SerializationType.JSON, toSave: GetWrappedList(), filePath: filePathJSON)
-        );
-        loadJson.onClick.AddListener(() =>
+        SaveJson += () =>
         {
-            objectList.ClearListMonobehaviours();
+            Serializer.Instance.Save(type: Serializer.SerializationType.JSON, toSave: objectList.GetWrappedList(), filePath: filePathJSON);
+        };
+        LoadJson += () =>
+        {
             ListWrapper newList = Serializer.Instance.Load<ListWrapper>(type: Serializer.SerializationType.JSON, filePath: filePathJSON);
             LoadList(newList);
-        });
+        };
 
         //XML
-        saveXml.onClick.AddListener(() =>
-            Serializer.Instance.Save(type: Serializer.SerializationType.XML, toSave: GetWrappedList(), filePath: filePathXML)
-        );
-        loadXml.onClick.AddListener(() =>
+        SaveXml += () => {
+            Serializer.Instance.Save(type: Serializer.SerializationType.XML, toSave: objectList.GetWrappedList(), filePath: filePathXML);
+        };
+        LoadXml += () =>
         {
-            objectList.ClearListMonobehaviours();
             ListWrapper newList = Serializer.Instance.Load<ListWrapper>(type: Serializer.SerializationType.XML, filePath: filePathXML);
             LoadList(newList);
-        });
+        };
 
         //BINARY
-        saveBinary.onClick.AddListener(() =>
-            Serializer.Instance.Save(type: Serializer.SerializationType.BINARY, toSave: GetWrappedList(), filePath: filePathBinary)
-        );
-        loadBinary.onClick.AddListener(() =>
+        SaveBinary += () => {
+            Serializer.Instance.Save(type: Serializer.SerializationType.BINARY, toSave: objectList.GetWrappedList(), filePath: filePathBinary);
+        };
+        LoadBinary += () =>
         {
-            objectList.ClearListMonobehaviours();
             ListWrapper newList = Serializer.Instance.Load<ListWrapper>(type: Serializer.SerializationType.BINARY, filePath: filePathBinary);
             LoadList(newList);
-        });
+        };
 
         //OTHER
-        createNewSet.onClick.AddListener(() => LoadList());
+        CreateNewSet += () => { LoadList(); };
+
+        SetButtonEvents();
     }
 
-    private ListWrapper GetWrappedList()
+    private void SetButtonEvents()
     {
-        return new ListWrapper { dataList = (objectList.FromTtoG((val) => { return val.objData; })).ToList() };
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            string buttonName = buttons[i].name;
+            FieldInfo field = GetType().GetField(buttonName, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            if (field != null && field.FieldType == typeof(Action))
+            {
+                //Debug.Log("Delegate found for " + buttonName);
+                var actionDelegate = (Action)field.GetValue(this);
+                buttons[i].onClick.AddListener(() => { actionDelegate.Invoke(); });
+            }
+            else
+            {
+                Debug.LogError("Delegate not found for " + buttonName);
+            }
+        }
     }
 
     private string GeneratePath(string folderName, string fileName)
@@ -97,18 +109,6 @@ public class GameManager : MonoBehaviour
             Directory.CreateDirectory(directoryPath);
 
         return Path.Combine(directoryPath, fileName);
-    }
-
-    private void InitObject(ObjectDataManager.ObjectData objData)
-    {
-        if (objData == null)
-        {
-            objData = GenerateNewData();
-        }
-
-        GameObject newObj = GameObject.CreatePrimitive((PrimitiveType)objData.shape);
-        newObj.AddComponent<ObjectDataManager>().Init(objData);
-        objectList.Add(newObj.GetComponent<ObjectDataManager>());
     }
 
     private ObjectDataManager.ObjectData GenerateNewData()
@@ -127,6 +127,18 @@ public class GameManager : MonoBehaviour
         );
 
         return objData;
+    }
+
+    private void InitObject(ObjectDataManager.ObjectData objData)
+    {
+        if (objData == null)
+        {
+            objData = GenerateNewData();
+        }
+
+        GameObject newObj = GameObject.CreatePrimitive((PrimitiveType)objData.shape);
+        newObj.AddComponent<ObjectDataManager>().Init(objData);
+        objectList.Add(newObj.GetComponent<ObjectDataManager>());
     }
 
     private void GeneratePrimitive(ObjectDataManager.ObjectData data = null)

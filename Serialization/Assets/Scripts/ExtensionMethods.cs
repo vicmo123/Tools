@@ -25,4 +25,9 @@ public static class ExtensionMethods
 
         collection.Clear();
     }
+
+    public static GameManager.ListWrapper GetWrappedList(this List<ObjectDataManager> objectList)
+    {
+        return new GameManager.ListWrapper { dataList = (objectList.FromTtoG((val) => { return val.objData; })).ToList() };
+    }
 }
