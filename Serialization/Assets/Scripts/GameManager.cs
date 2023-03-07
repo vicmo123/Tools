@@ -15,7 +15,7 @@ using UnityEngine.Events;
 public class GameManager : MonoBehaviour
 {
     public Button[] buttons;
-    public Action SaveJson, LoadJson, SaveXml, LoadXml, SaveBinary, LoadBinary, CreateNewSet;
+    public Action SaveJson, LoadJson, SaveXml, LoadXml, SaveBinary, LoadBinary, CreateNew;
 
     List<ObjectDataManager> objectList;
 
@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour
         };
 
         //OTHER
-        CreateNewSet += () => { LoadList(); };
+        CreateNew += () => { LoadList(); };
 
         SetButtonEvents();
     }

@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 133743487}
   - component: {fileID: 133743486}
   m_Layer: 5
-  m_Name: Load
+  m_Name: LoadXml
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -338,7 +338,7 @@ GameObject:
   - component: {fileID: 221629811}
   - component: {fileID: 221629810}
   m_Layer: 5
-  m_Name: Save
+  m_Name: SaveXml
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -641,7 +641,7 @@ GameObject:
   - component: {fileID: 683296525}
   - component: {fileID: 683296524}
   m_Layer: 5
-  m_Name: Save
+  m_Name: SaveJson
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -869,7 +869,7 @@ GameObject:
   - component: {fileID: 736080463}
   - component: {fileID: 736080462}
   m_Layer: 5
-  m_Name: Load
+  m_Name: LoadBinary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1315,7 +1315,7 @@ GameObject:
   - component: {fileID: 1115711379}
   - component: {fileID: 1115711378}
   m_Layer: 5
-  m_Name: NewSetButton
+  m_Name: CreateNew
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1906,7 +1906,7 @@ GameObject:
   - component: {fileID: 1448365078}
   - component: {fileID: 1448365077}
   m_Layer: 5
-  m_Name: Save
+  m_Name: SaveBinary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2525,13 +2525,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6892346736dcfce4f885520d3fc0d455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveJson: {fileID: 683296524}
-  loadJson: {fileID: 2146607613}
-  saveXml: {fileID: 221629810}
-  loadXml: {fileID: 133743486}
-  saveBinary: {fileID: 1448365077}
-  loadBinary: {fileID: 736080462}
-  createNewSet: {fileID: 1115711378}
+  buttons:
+  - {fileID: 683296524}
+  - {fileID: 2146607613}
+  - {fileID: 221629810}
+  - {fileID: 133743486}
+  - {fileID: 1448365077}
+  - {fileID: 736080462}
+  - {fileID: 1115711378}
   numberOfObjects: 8
 --- !u!64 &1993288865
 MeshCollider:
@@ -2704,7 +2705,7 @@ GameObject:
   - component: {fileID: 2146607614}
   - component: {fileID: 2146607613}
   m_Layer: 5
-  m_Name: Load
+  m_Name: LoadJson
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
