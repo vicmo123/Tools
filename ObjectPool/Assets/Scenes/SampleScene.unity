@@ -320,7 +320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe8867241123b64db241c83dba9315f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialNumberOfEnemies: 500
+  prefillAmount: 500
 --- !u!4 &772158232
 Transform:
   m_ObjectHideFlags: 0
