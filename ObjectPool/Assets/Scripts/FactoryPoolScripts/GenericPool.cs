@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FactoryPool
 {
-    public class GenericPool<EnumType, ObjType, ObjData> where ObjType : MonoBehaviour, IPoolable, IFactoryInitializable<ObjData>
+    public class GenericPool<EnumType, ObjType, ObjData> where ObjType : MonoBehaviour, IPoolable<EnumType, ObjData>, IFactoryInitializable<ObjData>
     {
         public GenericWrapper<EnumType, ObjType, ObjData> wrapper;
         Dictionary<EnumType, Queue<ObjType>> poolDict;
@@ -36,6 +36,15 @@ namespace FactoryPool
                 toRet.Activate();
             return toRet;
         }
+
+        //TODO
+        //public void PrefillPool(int quantity, EnumType enumType, ObjType objToPool)
+        //{
+        //    for (int i = 0; i < quantity; i++)
+        //    {
+        //        Pool(enumType, objToPool);
+        //    }
+        //}
     }
 }
     

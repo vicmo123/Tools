@@ -28,7 +28,7 @@ public class EnemyData
     private static EnemyTypes GenerateType()
     {
         int numTypes = System.Enum.GetValues(typeof(EnemyTypes)).Length;
-        return (EnemyTypes)Random.Range(0, numTypes - 1);
+        return (EnemyTypes)Random.Range(0, numTypes);
     }
 
     private static Vector3 GeneratePosition()

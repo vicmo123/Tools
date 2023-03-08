@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, IFactoryInitializable<EnemyData>, IPoolable
+public class Enemy : MonoBehaviour, IFactoryInitializable<EnemyData>, IPoolable<EnemyTypes, EnemyData>
 {
     private readonly float BigMult = 1.5f;
     private readonly float MedMult = 1f;
@@ -21,7 +21,28 @@ public class Enemy : MonoBehaviour, IFactoryInitializable<EnemyData>, IPoolable
     private Vector2 velocity;
     private float speed;
 
-    public void FixedUpdate()
+    private float screenHeight;
+    private float screenWidth;
+
+    private void Start()
+    {
+        var cam = Camera.main;
+        var screenBottomLeft = cam.ViewportToWorldPoint(new Vector3(0, 0, transform.position.z));
+        var screenTopRight = cam.ViewportToWorldPoint(new Vector3(1, 1, transform.position.z));
+        screenWidth = screenTopRight.x - screenBottomLeft.x;
+        screenHeight = screenTopRight.y - screenBottomLeft.y;
+    }
+
+
+    private void Update()
+    {
+        //if (CheckBounds())
+        //{
+        //    GenericWrapper<EnemyTypes, Enemy, EnemyData>.Instance.manager.RemoveObjectFromCollection(enemyData.Type, this);
+        //}
+    }
+
+    private void FixedUpdate()
     {
         MoveEnemy();
     }
@@ -74,5 +95,31 @@ public class Enemy : MonoBehaviour, IFactoryInitializable<EnemyData>, IPoolable
     {
         IsActive = false;
         gameObject.SetActive(IsActive);
+    }
+
+    public bool CheckBounds()
+    {
+        bool outOfBounds = false;
+
+        if (transform.position.x < -screenWidth / 2)
+            outOfBounds = true;
+        else if (transform.position.x > screenWidth / 2)
+            outOfBounds = true;
+        else if (transform.position.y < -screenHeight / 2)
+            outOfBounds = true;
+        else if (transform.position.y > screenHeight / 2)
+            outOfBounds = true;
+
+        return outOfBounds;
+    }
+
+    public EnemyData GetObjData()
+    {
+        return enemyData;
+    }
+
+    public EnemyTypes GetEnumType()
+    {
+        return enemyData.Type;
     }
 }

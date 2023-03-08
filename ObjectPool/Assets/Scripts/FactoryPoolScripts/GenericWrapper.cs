@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GenericWrapper<EnumType, ObjType, ObjData> where ObjType : MonoBehaviour, IPoolable, IFactoryInitializable<ObjData>
+public class GenericWrapper<EnumType, ObjType, ObjData> where ObjType : MonoBehaviour, IPoolable<EnumType, ObjData>, IFactoryInitializable<ObjData>
 {
     #region singleton
     private static readonly System.Lazy<GenericWrapper<EnumType, ObjType, ObjData>> instance = new System.Lazy<GenericWrapper<EnumType, ObjType, ObjData>>(() => new GenericWrapper<EnumType, ObjType, ObjData>());

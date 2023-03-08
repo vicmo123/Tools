@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace FactoryPool
 {
-    public class GenericFactory<EnumType, ObjType, ObjData> where ObjType : MonoBehaviour, IPoolable, IFactoryInitializable<ObjData>
+    public class GenericFactory<EnumType, ObjType, ObjData> where ObjType : MonoBehaviour, IPoolable<EnumType, ObjData>, IFactoryInitializable<ObjData>
     {
         public Dictionary<EnumType, GameObject> resourceDict;
         GenericWrapper<EnumType, ObjType, ObjData> wrapper;
@@ -20,7 +20,7 @@ namespace FactoryPool
             {
                 try
                 {
-                    GameObject prefab = LoadPrefab("Prefabs/" + enumType.ToString());
+                    GameObject prefab = LoadPrefab(enumType.ToString(), "Prefabs/");
                     if (prefab == null)
                         Debug.LogError("Unable to load prefab of type : " + enumType.ToString() + " because it is null");
                     else
@@ -33,9 +33,9 @@ namespace FactoryPool
             }
         }
 
-        public GameObject LoadPrefab(string path)
+        public GameObject LoadPrefab(string path, string folder = null)
         {
-            return Resources.Load<GameObject>(path);
+            return Resources.Load<GameObject>(folder + path);
         }
 
         public ObjType CreateObject(EnumType enumType, ObjData objDat)
