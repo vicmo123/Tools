@@ -13,13 +13,16 @@ public static class PrefabGenerator
     private static HashSet<string> usedNames = new HashSet<string>();
     private static List<GameObject> GeneratedPrefabs = new List<GameObject>();
     private static List<Sprite> spriteList = new List<Sprite>();
+
+    #region filePaths
     private static string spritePath = "EnemySprites/";
     private static string pathOldBaseAi = "Scripts/Old Scripts/OldAiBase/";
     private static string pathNewBaseAi = "Scripts/New Scripts/AITypes/";
     private static string searchPattern = "*.cs";
     private static string scriptablePath = "Assets/Resources/ScriptableAssets/";
+    private static string saveLocationPrefabs = "Resources/Prefabs/";
+    #endregion
 
-    private static string saveLocation = "Resources/Prefabs/";
     [MenuItem("Custom Tools/GeneratePrefabs")]
     public static void GeneratePrefabs()
     {
@@ -32,7 +35,7 @@ public static class PrefabGenerator
 
         for (int i = GeneratedPrefabs.Count -1; i >= 0; i--)
         {
-            GeneratedPrefabs[i].SaveToFileSystem(saveLocation);
+            GeneratedPrefabs[i].SaveToFileSystem(saveLocationPrefabs);
             GeneratedPrefabs[i] = null;
         }
 
@@ -135,11 +138,14 @@ public static class PrefabGenerator
             toAddList.Add(toLink);
         }
 
-        var aiBase = obj.GetComponent<Old_AIBase>();
-        aiBase.LinkAiBase(toAddList);
-        aiBase.enemyType = GetRandomInEnum<EnumReferences.EnemyType>();
-        aiBase.aiStats = GetRandomAiStats();
-        obj.GetComponent<SpriteRenderer>().sprite = GetRandomSprite();
+        if(obj.GetComponent<Old_AIBase>())
+        {
+            var aiBase = obj.GetComponent<Old_AIBase>();
+            aiBase.LinkAiBase(toAddList);
+            aiBase.enemyType = GetRandomInEnum<EnumReferences.EnemyType>();
+            aiBase.aiStats = GetRandomAiStats();
+            obj.GetComponent<SpriteRenderer>().sprite = GetRandomSprite();
+        }
     }
 
     public static void LinkAiBase<T>(this T linkable, List<Component> toLink)
