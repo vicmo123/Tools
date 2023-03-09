@@ -143,7 +143,6 @@ public static class PrefabGenerator
 
         foreach (string assetPath in assetPaths)
         {
-            string fullPath = Path.Combine(Application.dataPath, assetPath.Replace("\\", "/"));
             System.Type assetType = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
             if (assetType == typeof(T))
             {
@@ -159,7 +158,6 @@ public static class PrefabGenerator
 
     public static AIStats GetRandomAiStats()
     {
-        string folderPath = Path.Combine(Application.dataPath, scriptablePath);
         var scriptables = LoadAllScriptableAssets<AIStats>(scriptablePath, "*.asset");
         return scriptables[Random.Range(0, scriptables.Length)];
     }
@@ -167,33 +165,24 @@ public static class PrefabGenerator
     public static string GetRandomName()
     {
         int tries = 50;
-        string[] adjectives = { "Happy", "Angry", "Brave", "Clever", "Drunk", "Energetic", "Friendly", "Gentle", "Helpful", "Intelligent", "Joyful", "Kind", "Loyal", "Mighty", "Nimble", "Optimistic", "Proud", "Quiet", "Rugged", "Silly", "Talented", "Unique", "Vibrant", "Wise", "Zealous" };
-        string[] nouns = { "Cat", "Dog", "Horse", "Bird", "Fish", "Lion", "Tiger", "Bear", "Wolf", "Fox", "Elephant", "Giraffe", "Monkey", "Snake", "Crocodile", "Spider", "Dragon", "Robot", "Ninja", "Pirate", "Knight", "Wizard", "Alien", "Vampire", "Zombie", "Bob" };
-
+        
         HashSet<string> prefabNames = new HashSet<string>();
-        if(GeneratedPrefabs.Count > 0)
+        if(GeneratedPrefabs.Count > 0 || GeneratedPrefabs != null)
         {
             foreach (GameObject prefab in GeneratedPrefabs)
             {
                 prefabNames.Add(prefab.name);
             }
         }
-        else
-        {
-            string adjective = adjectives[Random.Range(0, adjectives.Length)];
-            string noun = nouns[Random.Range(0, nouns.Length)];
-            string name = adjective + " " + noun;
-            return name;
-        }
         
 
         for (int i = 0; i < tries; i++)
         {
-            string adjective = adjectives[Random.Range(0, adjectives.Length)];
-            string noun = nouns[Random.Range(0, nouns.Length)];
-            string name = adjective + " " + noun;
+            Adjectives adjective = (Adjectives)Random.Range(0, System.Enum.GetValues(typeof(Adjectives)).Length);
+            Nouns noun = (Nouns)Random.Range(0, System.Enum.GetValues(typeof(Nouns)).Length);
+            string name = adjective.ToString() + " " + noun.ToString();
 
-            if (!prefabNames.Contains(name))
+            if (!prefabNames.Contains(name) || prefabNames.Count <= 0)
             {
                 return name;
             }

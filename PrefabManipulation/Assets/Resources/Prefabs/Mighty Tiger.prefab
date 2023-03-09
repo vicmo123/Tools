@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &380332135521941529
+--- !u!1 &3008981788214394805
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,25 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 449081898701221392}
-  - component: {fileID: 4318749413778215777}
-  - component: {fileID: 1722468606028241040}
-  - component: {fileID: 8502905121369657554}
-  - component: {fileID: 8853265300450643441}
+  - component: {fileID: 4972494133432141498}
+  - component: {fileID: 2302337102475985401}
+  - component: {fileID: 3587705277124238437}
+  - component: {fileID: 7702222551926884726}
+  - component: {fileID: 3856814676579119522}
   m_Layer: 0
-  m_Name: Talented Giraffe
+  m_Name: Mighty Tiger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &449081898701221392
+--- !u!4 &4972494133432141498
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380332135521941529}
+  m_GameObject: {fileID: 3008981788214394805}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,14 +35,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &4318749413778215777
+--- !u!50 &2302337102475985401
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380332135521941529}
+  m_GameObject: {fileID: 3008981788214394805}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -56,13 +56,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &1722468606028241040
+--- !u!61 &3587705277124238437
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380332135521941529}
+  m_GameObject: {fileID: 3008981788214394805}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -82,13 +82,13 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!212 &8502905121369657554
+--- !u!212 &7702222551926884726
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380332135521941529}
+  m_GameObject: {fileID: 3008981788214394805}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -123,7 +123,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8b7b792ba318ea74281ba309655bb1ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a8abefb4213c56b45b4cd95d58af98ee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -134,20 +134,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8853265300450643441
+--- !u!114 &3856814676579119522
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380332135521941529}
+  m_GameObject: {fileID: 3008981788214394805}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20561f3efaeda0347aac3dff87e859aa, type: 3}
+  m_Script: {fileID: 11500000, guid: db77c88bbb71a4c4d8a816b276a96149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyType: 1
-  rb: {fileID: 4318749413778215777}
-  coli: {fileID: 1722468606028241040}
-  sr: {fileID: 8502905121369657554}
-  aiStats: {fileID: 11400000, guid: 943c74bdbb0d0c04287c0a7561dd923d, type: 2}
+  enemyType: 0
+  rb: {fileID: 2302337102475985401}
+  coli: {fileID: 3587705277124238437}
+  sr: {fileID: 7702222551926884726}
+  aiStats: {fileID: 11400000, guid: c80276e05e972464a81d0aca6638269c, type: 2}
