@@ -5,14 +5,26 @@ using UnityEditor;
 using System.Reflection;
 using System.Linq;
 using System.IO;
+using Unity.VisualScripting;
 
 public static class PrefabGenerator
 {
+    private static int numberToGenerate = 5;
+    private static HashSet<string> usedNames = new HashSet<string>();
+    private static List<GameObject> GeneratedPrefabs = new List<GameObject>();
+    private static List<Sprite> spriteList = new List<Sprite>();
+    private static string spritePath = "EnemySprites/";
+    private static string pathOldBaseAi = "Scripts/Old Scripts/OldAiBase/";
+    private static string pathNewBaseAi = "Scripts/New Scripts/AITypes/";
+    private static string searchPattern = "*.cs";
+    private static string scriptablePath = "Assets/Resources/ScriptableAssets/";
 
-    [MenuItem("Custom Tools/GeneratePrefabs")] //This the function below it as a menu item, which appears in the tool bar
-    public static void GeneratePrefabs() //Menu items can call STATIC functions, does not work for non-static since Editor scripts cannot be attached to objects
+    private static string saveLocation = "Resources/Prefabs/";
+    [MenuItem("Custom Tools/GeneratePrefabs")]
+    public static void GeneratePrefabs()
     {
-        spriteList = GetSpritesInAssets(spritePath).ToList();
+        usedNames = GetAlreadyUsedNameInFileSystem("Prefabs/");
+        spriteList = LoadAllResourcesOfType<Sprite>(spritePath).ToList();
         for (int i = 0; i < numberToGenerate; i++)
         {
             GeneratedPrefabs.Add(GeneratePrefab());
@@ -27,20 +39,86 @@ public static class PrefabGenerator
         GeneratedPrefabs.Clear();
     }
 
-    private static int numberToGenerate = 5;
-    private static List<GameObject> GeneratedPrefabs = new List<GameObject>();
-    private static List<Sprite> spriteList = new List<Sprite>();
-    private static string spritePath = "EnemySprites/";
-    private static string pathOldBaseAi = "Scripts/Old Scripts/OldAiBase/";
-    private static string searchPattern = "*.cs";
-    private static string scriptablePath = "Assets/Resources/ScriptableAssets/";
-    private static string saveLocation = "Resources/Prefabs/";
+    [MenuItem("Custom Tools/RepairPrefab")]
+    public static void RepairPrefabs()
+    {
+        string folderPath = EditorUtility.OpenFolderPanel("Select Folder", "", "");
+        string assetPath = folderPath.Replace(Application.dataPath, "Assets").Replace("\\", "/");
+        string[] files = Directory.GetFiles(assetPath, "*.prefab", SearchOption.AllDirectories);
 
+        foreach (string file in files)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(file);
+
+            if (prefab != null && prefab.GetComponent<Old_AIBase>() != null)
+            {
+                try
+                {
+                    //Instantiate a copy of the Prefab
+                    GameObject prefabInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                    var oldAiBase = prefabInstance.GetComponent<Old_AIBase>();
+                    AIStats stats = oldAiBase.aiStats;
+                    EnumReferences.EnemyType enumType = oldAiBase.enemyType;
+
+                    //Replace the component with a new one
+                    string newAiString = (oldAiBase.GetType().ToString().Split("_"))[1];
+                    prefabInstance.ReplaceComponent(typeof(Old_AIBase), newAiString.GetSystemTypeWithString());
+                    var newAiBase = prefabInstance.GetComponent<AIBase>();
+                    newAiBase.LinkAiBase(new List<Component> { prefabInstance.GetComponent<Rigidbody2D>(), prefabInstance.GetComponent<BoxCollider2D>(), prefabInstance.GetComponent<SpriteRenderer>() });
+                    newAiBase.aiStats = stats;
+                    newAiBase.enemyType = enumType;
+
+                    //Save the Prefab
+                    PrefabUtility.SaveAsPrefabAsset(prefabInstance, file);
+                    AssetDatabase.SaveAssets();
+                    Debug.Log($"{prefabInstance.name} was fixed at: {file}");
+
+                    //Destroy the instantiated copy
+                    GameObject.DestroyImmediate(prefabInstance, true);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"Failed to save prefab {prefab.name}: {ex.Message} : {ex.StackTrace}");
+                }
+            }
+        }
+    }
+
+    private static System.Type GetSystemTypeWithString(this string toType)
+    {
+        Assembly asm = typeof(AIBase).Assembly;
+        System.Type newType = asm.GetType(toType);
+
+        return newType;
+    }
+
+    private static void ReplaceComponent(this GameObject obj, System.Type oldComponent, System.Type newComponent)
+    {
+        if (!typeof(Component).IsAssignableFrom(oldComponent))
+        {
+            Debug.LogError("Error: oldComponent is not a subclass of Component.");
+            return;
+        }
+
+        if (!typeof(Component).IsAssignableFrom(newComponent))
+        {
+            Debug.Log(newComponent);
+            Debug.LogError("Error: newComponent is not a subclass of Component.");
+            return;
+        }
+
+        var toDestroy = obj.GetComponent(oldComponent);
+        if (toDestroy != null)
+        {
+            GameObject.DestroyImmediate(toDestroy, true);
+            obj.AddComponent(newComponent);
+        }
+    }
 
     public static GameObject GeneratePrefab()
     {
         GameObject newPrefab = new GameObject();
-        newPrefab.AddComponents(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(SpriteRenderer), GetRandomAI<Old_AIBase>());
+        newPrefab.AddComponents(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(SpriteRenderer), GetRandomAI<Old_AIBase>(pathOldBaseAi));
         newPrefab.name = GetRandomName();
 
         return newPrefab;
@@ -79,9 +157,9 @@ public static class PrefabGenerator
         }
     }
 
-    public static Sprite[] GetSpritesInAssets(string filePath)
+    public static T[] LoadAllResourcesOfType<T>(string filePath) where T : UnityEngine.Object
     {
-        return Resources.LoadAll<Sprite>(filePath);
+        return Resources.LoadAll<T>(filePath);
     }
 
     public static Sprite GetRandomSprite()
@@ -89,16 +167,16 @@ public static class PrefabGenerator
         return spriteList[Random.Range(0, spriteList.Count)];
     }
 
-    public static System.Type GetRandomAI<T>()
+    public static System.Type GetRandomAI<T>(string filePath)
     {
-        string folderPath = Path.Combine(Application.dataPath, pathOldBaseAi);
+        string folderPath = Path.Combine(Application.dataPath, filePath);
 
         var baseType = typeof(T);
-        var randomScriptType = GetRandomTypeFromFolder(folderPath, searchPattern, baseType);
+        var randomScriptTypes = GetAllOfTypeFromFolder(folderPath, searchPattern, baseType);
 
-        if (randomScriptType != null)
+        if (randomScriptTypes != null)
         {
-            return randomScriptType;
+            return randomScriptTypes[Random.Range(0, randomScriptTypes.Count)];
         }
         else
         {
@@ -106,7 +184,7 @@ public static class PrefabGenerator
         }
     }
 
-    public static System.Type GetRandomTypeFromFolder(string folderPath, string searchPattern, System.Type baseType)
+    public static List<System.Type> GetAllOfTypeFromFolder(string folderPath, string searchPattern, System.Type baseType)
     {
         List<System.Type> typeList = new List<System.Type>();
 
@@ -122,7 +200,7 @@ public static class PrefabGenerator
 
         if (typeList.Count > 0)
         {
-            return typeList[UnityEngine.Random.Range(0, typeList.Count)];
+            return typeList;
         }
         else
         {
@@ -162,11 +240,32 @@ public static class PrefabGenerator
         return scriptables[Random.Range(0, scriptables.Length)];
     }
 
+    private static HashSet<string> GetAlreadyUsedNameInFileSystem(string saveLocationResources)
+    {
+        GameObject[] prefabs = Resources.LoadAll<GameObject>(saveLocationResources);
+        HashSet<string> usedNames = new HashSet<string>();
+
+        if(prefabs != null || prefabs.Length > 0)
+        {
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                usedNames.Add(prefabs[i].name);
+            }
+        }
+
+        return usedNames;
+    }
+
     public static string GetRandomName()
     {
-        int tries = 50;
-        
+        int numAdj = System.Enum.GetValues(typeof(Adjectives)).Cast<Adjectives>().ToArray().Length;
+        int numNoun = System.Enum.GetValues(typeof(Nouns)).Cast<Nouns>().ToArray().Length;
+        int tries = numAdj * numNoun;
+
         HashSet<string> prefabNames = new HashSet<string>();
+        if (usedNames != null)
+            prefabNames.UnionWith(usedNames);
+
         if(GeneratedPrefabs.Count > 0 || GeneratedPrefabs != null)
         {
             foreach (GameObject prefab in GeneratedPrefabs)
@@ -175,7 +274,6 @@ public static class PrefabGenerator
             }
         }
         
-
         for (int i = 0; i < tries; i++)
         {
             Adjectives adjective = (Adjectives)Random.Range(0, System.Enum.GetValues(typeof(Adjectives)).Length);
@@ -188,6 +286,7 @@ public static class PrefabGenerator
             }
         }
 
+        Debug.LogError("No valid name was found, please add more words in : (NameWordsCollection.cs)");
         return "No Name";
     }
 

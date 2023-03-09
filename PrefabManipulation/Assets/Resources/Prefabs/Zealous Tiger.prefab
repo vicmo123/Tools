@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6805123178803029534
+--- !u!1 &3056783383300483028
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,25 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6033080506431480090}
-  - component: {fileID: 6646914930792528998}
-  - component: {fileID: 4319763092614848944}
-  - component: {fileID: 7034592522059769657}
-  - component: {fileID: 7795389327113576030}
+  - component: {fileID: 8444299937168466714}
+  - component: {fileID: 7375603818064063488}
+  - component: {fileID: 4579355139159918756}
+  - component: {fileID: 3197043000861908236}
+  - component: {fileID: 7182044217535097591}
   m_Layer: 0
-  m_Name: Drunk Snake
+  m_Name: Zealous Tiger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6033080506431480090
+--- !u!4 &8444299937168466714
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6805123178803029534}
+  m_GameObject: {fileID: 3056783383300483028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,14 +35,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &6646914930792528998
+--- !u!50 &7375603818064063488
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6805123178803029534}
+  m_GameObject: {fileID: 3056783383300483028}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -56,13 +56,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &4319763092614848944
+--- !u!61 &4579355139159918756
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6805123178803029534}
+  m_GameObject: {fileID: 3056783383300483028}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -82,13 +82,13 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!212 &7034592522059769657
+--- !u!212 &3197043000861908236
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6805123178803029534}
+  m_GameObject: {fileID: 3056783383300483028}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -134,20 +134,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7795389327113576030
+--- !u!114 &7182044217535097591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6805123178803029534}
+  m_GameObject: {fileID: 3056783383300483028}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20561f3efaeda0347aac3dff87e859aa, type: 3}
+  m_Script: {fileID: 11500000, guid: fd248740d82f1654198f22e306c3256e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyType: 1
-  rb: {fileID: 6646914930792528998}
-  coli: {fileID: 4319763092614848944}
-  sr: {fileID: 7034592522059769657}
+  enemyType: 0
+  rb: {fileID: 7375603818064063488}
+  coli: {fileID: 4579355139159918756}
+  sr: {fileID: 3197043000861908236}
   aiStats: {fileID: 11400000, guid: f38871d839d9b6049948622cf0ebb842, type: 2}

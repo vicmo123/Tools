@@ -15,7 +15,6 @@ public class Challenge : MonoBehaviour
             e) Have a collection of words, and randomly generate a name by mixing 2 of the words
             f) Save the prefab to the project with a randomy generated and refresh the asset database
 
-
         2) Create a menu item that fixes all the bad prefabs. It will loop through and replace all the bad scripts, but maintain the links and values
             a) Loop through all prefabs
             b) Remove the old component and replace it with the good one
@@ -23,9 +22,9 @@ public class Challenge : MonoBehaviour
             d) Save the prefab properly, handle all errors and edge cases
 
         3) Fix the bug
-        a) When the game starts, load 10 of the prefabs randomly
-        b) Press the "A" key on the keyboard to deal damage to the AI's
-        c) Understand & Fix the bug
+            a) When the game starts, load 10 of the prefabs randomly
+            b) Press the "A" key on the keyboard to deal damage to the AI's
+            c) Understand & Fix the bug
             
     
 

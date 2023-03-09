@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8449143272417288010
+--- !u!1 &6007382389493901202
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,25 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 828804428346593025}
-  - component: {fileID: 9041527397444345769}
-  - component: {fileID: 11019309693671298}
-  - component: {fileID: 5014538088476243038}
-  - component: {fileID: 9071619577576267720}
+  - component: {fileID: 6035038047984727324}
+  - component: {fileID: 1725683814297533714}
+  - component: {fileID: 7805979243435884544}
+  - component: {fileID: 1729408642551830784}
+  - component: {fileID: 8657096590632492199}
   m_Layer: 0
-  m_Name: Nimble Spider
+  m_Name: Unique Bear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &828804428346593025
+--- !u!4 &6035038047984727324
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8449143272417288010}
+  m_GameObject: {fileID: 6007382389493901202}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,14 +35,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &9041527397444345769
+--- !u!50 &1725683814297533714
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8449143272417288010}
+  m_GameObject: {fileID: 6007382389493901202}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -56,13 +56,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &11019309693671298
+--- !u!61 &7805979243435884544
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8449143272417288010}
+  m_GameObject: {fileID: 6007382389493901202}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -82,13 +82,13 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!212 &5014538088476243038
+--- !u!212 &1729408642551830784
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8449143272417288010}
+  m_GameObject: {fileID: 6007382389493901202}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -123,7 +123,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8b7b792ba318ea74281ba309655bb1ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a8abefb4213c56b45b4cd95d58af98ee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -134,20 +134,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &9071619577576267720
+--- !u!114 &8657096590632492199
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8449143272417288010}
+  m_GameObject: {fileID: 6007382389493901202}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20561f3efaeda0347aac3dff87e859aa, type: 3}
+  m_Script: {fileID: 11500000, guid: 8072b07e70f493e4c845ed4e593f2717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyType: 1
-  rb: {fileID: 9041527397444345769}
-  coli: {fileID: 11019309693671298}
-  sr: {fileID: 5014538088476243038}
+  enemyType: 3
+  rb: {fileID: 1725683814297533714}
+  coli: {fileID: 7805979243435884544}
+  sr: {fileID: 1729408642551830784}
   aiStats: {fileID: 11400000, guid: c80276e05e972464a81d0aca6638269c, type: 2}
