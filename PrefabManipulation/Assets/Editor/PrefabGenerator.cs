@@ -5,7 +5,6 @@ using UnityEditor;
 using System.Reflection;
 using System.Linq;
 using System.IO;
-using Unity.VisualScripting;
 
 public static class PrefabGenerator
 {
@@ -67,7 +66,7 @@ public static class PrefabGenerator
                     string newAiString = (oldAiBase.GetType().ToString().Split("_"))[1];
                     prefabInstance.ReplaceComponent(typeof(Old_AIBase), newAiString.GetSystemTypeWithString());
                     var newAiBase = prefabInstance.GetComponent<AIBase>();
-                    newAiBase.LinkAiBase(new List<Component> { prefabInstance.GetComponent<Rigidbody2D>(), prefabInstance.GetComponent<BoxCollider2D>(), prefabInstance.GetComponent<SpriteRenderer>() });
+                    newAiBase.FieldLinker(new List<Component> { prefabInstance.GetComponent<Rigidbody2D>(), prefabInstance.GetComponent<BoxCollider2D>(), prefabInstance.GetComponent<SpriteRenderer>() });
                     newAiBase.aiStats = stats;
                     newAiBase.enemyType = enumType;
 
@@ -89,10 +88,19 @@ public static class PrefabGenerator
 
     private static System.Type GetSystemTypeWithString(this string toType)
     {
-        Assembly asm = typeof(AIBase).Assembly;
-        System.Type newType = asm.GetType(toType);
+        try
+        {
+            Assembly asm = typeof(AIBase).Assembly;
+            System.Type newType = asm.GetType(toType);
 
-        return newType;
+            return newType;
+        }
+        catch (System.Exception)
+        {
+            Debug.LogError("Cannot convert " + toType + "into System.Type");
+        }
+
+        return null;
     }
 
     private static void ReplaceComponent(this GameObject obj, System.Type oldComponent, System.Type newComponent)
@@ -141,14 +149,14 @@ public static class PrefabGenerator
         if(obj.GetComponent<Old_AIBase>())
         {
             var aiBase = obj.GetComponent<Old_AIBase>();
-            aiBase.LinkAiBase(toAddList);
+            aiBase.FieldLinker(toAddList);
             aiBase.enemyType = GetRandomInEnum<EnumReferences.EnemyType>();
             aiBase.aiStats = GetRandomAiStats();
             obj.GetComponent<SpriteRenderer>().sprite = GetRandomSprite();
         }
     }
 
-    public static void LinkAiBase<T>(this T linkable, List<Component> toLink)
+    public static void FieldLinker<T>(this T linkable, List<Component> toLink)
     {
         FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
         foreach (FieldInfo field in fields)
@@ -156,9 +164,9 @@ public static class PrefabGenerator
             foreach (var item in toLink)
             {
                 if (field.FieldType.IsAssignableFrom(item.GetType()))
-                {
                     field.SetValue(linkable, item);
-                }
+                else
+                    Debug.LogError("Cannot link " + item + " to " + linkable);
             }
         }
     }
