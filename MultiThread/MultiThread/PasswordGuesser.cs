@@ -23,7 +23,16 @@ static class PasswordGuesser
 
     public static void ParallelBankBreaker(int passLength)
     {
-        int numChunks = processorCount * 2;
+        int numChunks = 0;
+        if (passLength == 1)
+        {
+            numChunks = processorCount;
+        }
+        else
+        {
+            numChunks = processorCount * 2;
+        }
+        
         int chunkSize = maxNumGuesses / numChunks;
 
         List<Task> tasks = new List<Task>();
