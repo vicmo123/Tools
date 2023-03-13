@@ -15,10 +15,14 @@ namespace BankOfBitsAndBytes
         {
             bbb = new BankOfBitsNBytes(passwordLength);
             PasswordGuesser.Init(passwordLength, bbb);
+            var stopWatch = new System.Diagnostics.Stopwatch();
+            stopWatch.Start();
             while (PasswordGuesser.withdrawAmount != -1)
             {
                 PasswordGuesser.ParallelBankBreaker(passwordLength);
             }
+            stopWatch.Stop();
+            Console.WriteLine(stopWatch.ElapsedMilliseconds);
             Console.ReadLine();
         }
     }
