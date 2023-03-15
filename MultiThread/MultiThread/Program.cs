@@ -8,7 +8,7 @@ namespace BankOfBitsAndBytes
 {
     class Program
     {
-        static readonly int passwordLength = 2;
+        static readonly int passwordLength = 5;
         static BankOfBitsNBytes bbb;
 
         static void Main(string[] args)
