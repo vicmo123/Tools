@@ -1,22 +1,21 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 public enum IngredientUnit { Spoon, Cup, Bowl, Piece }
-
 // Custom serializable class
 [Serializable]
 public class Ingredient
 {
-    public AnimationCurve curve;
-    public string name;
-    public int amount = 1;
+    [PropertyDataSize(width: 150f, height: 60f)] public AnimationCurve curve;
+    [PropertyDataSize(width: 120f, height: 60f)] public string name;
+    [PropertyDataSize(width: 30f, height: 20f)] public int amount = 1;
     public IngredientUnit unit;
-    public float size;
-    public Vector2 vect2;
+    [PropertyDataSize(width: 50f, height: 60f)] public float size;
+    
 }
 
 public class Recipe : MonoBehaviour
-{
-    public Ingredient potionResult;
+{ 
     public Ingredient[] potionIngredients;
 }

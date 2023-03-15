@@ -13,7 +13,7 @@ public class IngredientDrawer : PropertyDrawer
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-        //lineSpacing = PropertyDrawerLayoutTool.GenerateProperty(label, position, spacing, PropertyDrawerLayoutTool.GetPropertyFields(property, "Ingredient", width, height));
+        //EditorGUI.LabelField(new Rect(position.x, position.y, 100, 20), "Sammmple");
         totalPropertyHeight = PropertyDrawerLayoutTool.GenerateProperty(label, position, spacing, PropertyDrawerLayoutTool.GetPropertyFields(property, typeof(Ingredient), width, height));
     }
 
