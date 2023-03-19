@@ -1,20 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;  //Required for MenuItem, means that this is an Editor script, must be placed in an Editor folder, and cannot be compiled!
-using System.Linq;  //Used for Select
+using UnityEditor;
+using System.Linq;
 using Random = UnityEngine.Random;
 using System.Text;
 using System;
+using System.IO;
 
 public class CardCreatorWindow : EditorWindow
 {
-    private CardDataScriptable cardData;
+    private CardDataScriptable cardClone = null;
+    private CardDataScriptable cardData = null;
     private Sprite[] sprites;
     private int currentSpriteIndex = 0;
 
-    [MenuItem("Custom Tools/Card Creator Window")] //This the function below it as a menu item, which appears in the tool bar
-    public static void CreateShowcase() //Menu items can call STATIC functions, does not work for non-static since Editor scripts cannot be attached to objects
+    [MenuItem("Custom Tools/Card Creator Window")]
+    public static void CreateShowcase()
     {
         EditorWindow window = GetWindow<CardCreatorWindow>("Card Creator");
         Vector2 windowSize = new Vector2(600, 700);
@@ -28,7 +30,7 @@ public class CardCreatorWindow : EditorWindow
 
     private void OnEnable()
     {
-        colorTexture = EditorGUIUtility.whiteTexture;
+        colorTexture = EditorGUIUtility.whiteTexture; 
         sprites = Resources.LoadAll<Sprite>("Sprites/");
         sprites.OrderBy(val => val.name);
     }
@@ -36,7 +38,12 @@ public class CardCreatorWindow : EditorWindow
 
     private void OnGUI()
     {
-        
+        if (!EditorWindow.focusedWindow.titleContent.text.Contains("Card Creator"))
+        {
+            CardCreatorWindow myWindow = EditorWindow.GetWindow<CardCreatorWindow>();
+            myWindow.Focus();
+        }
+
         Vector2 editorSize = new Vector2(EditorWindow.focusedWindow.position.width, EditorWindow.focusedWindow.position.height);
 
         PrintControls();
@@ -44,37 +51,33 @@ public class CardCreatorWindow : EditorWindow
 
         if (cardData != null)
         {
-            currentSpriteIndex = Array.IndexOf(sprites, cardData.Image);
+            if (cardClone == null)
+            {
+                cardClone = Instantiate(cardData);
+            }
 
+            currentSpriteIndex = Array.IndexOf(sprites, cardClone.Image);
             PrintFields();
-
             PrintCardPreview(editorSize);
         }
     }
 
-    private void SaveCardData()
-    {
-        if (cardData != null)
-        {
-            EditorUtility.SetDirty(cardData);
-            AssetDatabase.SaveAssets();
-        }
-    }
 
     private void PrintFields()
     {
-        cardData.name = EditorGUILayout.TextField("File Name : ", cardData.name);
-        cardData.CharacterName = EditorGUILayout.TextField("Character Name : ", cardData.CharacterName);
-        cardData.ManaCost = EditorGUILayout.IntField("ManaCost", cardData.ManaCost);
-        cardData.Power = EditorGUILayout.IntField("Attack", cardData.Power);
-        cardData.defense = EditorGUILayout.IntField("Defense", cardData.defense);
-        cardData.Description = EditorGUILayout.TextField(
-        "Description : ",
-        cardData.Description,
-        EditorStyles.textArea,
-        GUILayout.Height(EditorGUIUtility.singleLineHeight * 2)
+        //cardClone.name = EditorGUILayout.TextField("File Name : ", cardClone.name.Split("(")[0]); 
+        cardClone.name = cardClone.name.Split("(")[0];
+        cardClone.CharacterName = EditorGUILayout.TextField("Character Name : ", cardClone.CharacterName);
+        cardClone.ManaCost = EditorGUILayout.IntField("ManaCost", cardClone.ManaCost);
+        cardClone.Power = EditorGUILayout.IntField("Attack", cardClone.Power);
+        cardClone.defense = EditorGUILayout.IntField("Defense", cardClone.defense);
+        cardClone.Description = EditorGUILayout.TextField(
+            "Description : ",
+            cardClone.Description,
+            EditorStyles.textArea,
+            GUILayout.Height(EditorGUIUtility.singleLineHeight * 2)
         );
-        cardData.Color = (Colors)EditorGUILayout.IntSlider("Card Color: ", (int)cardData.Color, 0, Enum.GetValues(typeof(Colors)).Length - 1);
+        cardClone.Color = (Colors)EditorGUILayout.IntSlider("Card Color: ", (int)cardClone.Color, 0, Enum.GetValues(typeof(Colors)).Length - 1);
     }
 
     private void PrintControls()
@@ -82,15 +85,15 @@ public class CardCreatorWindow : EditorWindow
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Load File"))
         {
-            Debug.Log("load");
+            Load();
         }
         if (GUILayout.Button("Go To File "))
         {
-            Debug.Log("go to...");
+            GoToFile();
         }
         if (GUILayout.Button("Create New Card"))
         {
-            Debug.Log("New Card");
+            CreateNewCard();
         }
         GUILayout.EndHorizontal();
     }
@@ -98,14 +101,14 @@ public class CardCreatorWindow : EditorWindow
     private void PrintCardPreview(Vector2 editorSize)
     {
         var oldColor = GUI.color;
-        GUI.color = cardData.Color.GetUnityEngineColor();
+        GUI.color = cardClone.Color.GetUnityEngineColor();
         GUI.Box(new Rect((editorSize.x - cardSize.x) / 2f, (editorSize.y - cardSize.y) * 3f / 4f, cardSize.x, cardSize.y), "", GUI.skin.window);
         GUI.color = oldColor;
 
         //Center of screen
         GUILayout.BeginArea(new Rect((editorSize.x - cardSize.x) / 2f, (editorSize.y - cardSize.y) * 3f / 4f, cardSize.x, cardSize.y));
         {
-            GUILayout.Label(cardData.CharacterName);
+            GUILayout.Label(cardClone.CharacterName);
 
             PrintImageSelector();
             PrintCardInfo();
@@ -114,6 +117,10 @@ public class CardCreatorWindow : EditorWindow
 
         GUILayout.BeginArea(new Rect((editorSize.x - cardSize.x) / 2f, (editorSize.y - cardSize.y) * 3f / 4f + cardSize.y + 10f, cardSize.x, 50f));
         {
+            if (GUILayout.Button("Revert Changes"))
+            {
+                ResetCard();
+            }
             if (GUILayout.Button("Save Card"))
             {
                 SaveCardData();
@@ -139,7 +146,7 @@ public class CardCreatorWindow : EditorWindow
             {
                 currentSpriteIndex--;
                 if (currentSpriteIndex < 0) currentSpriteIndex = sprites.Length - 1;
-                cardData.Image = sprites[currentSpriteIndex];
+                cardClone.Image = sprites[currentSpriteIndex];
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -148,7 +155,7 @@ public class CardCreatorWindow : EditorWindow
 
             Rect rect = GUILayoutUtility.GetRect(200, 200, style);
             GUI.Box(rect, "", style);
-            GUI.DrawTexture(rect, cardData.Image.texture, ScaleMode.ScaleToFit);
+            GUI.DrawTexture(rect, cardClone.Image.texture, ScaleMode.ScaleToFit);
 
             GUILayout.BeginVertical();
             GUILayout.FlexibleSpace();
@@ -158,7 +165,7 @@ public class CardCreatorWindow : EditorWindow
             {
                 currentSpriteIndex++;
                 if (currentSpriteIndex >= sprites.Length) currentSpriteIndex = 0;
-                cardData.Image = sprites[currentSpriteIndex];
+                cardClone.Image = sprites[currentSpriteIndex];
             }
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -171,11 +178,13 @@ public class CardCreatorWindow : EditorWindow
     private void PrintCardInfo()
     {
         GUILayout.Label("Card Info");
-        Rect previewRect = GUILayoutUtility.GetRect(cardSize.x, cardSize.y);
-        //GUILayout.ExpandHeight(false);
+        Rect previewRect = GUILayoutUtility.GetRect(cardSize.x, cardSize.y - 20);
         float spacing = 10;
-        previewRect.x += spacing; previewRect.width -= spacing * 2; previewRect.height -= spacing * 3;
+        previewRect.x += spacing;
+        previewRect.width -= spacing * 2;
+        previewRect.height += 40;
 
+        
         if (Event.current.type == EventType.Repaint)
         {
             GUIStyle cardStyle = new GUIStyle(GUI.skin.box);
@@ -184,15 +193,80 @@ public class CardCreatorWindow : EditorWindow
 
             float x = previewRect.x + 10;
             float y = previewRect.y + 10;
-            GUI.Label(new Rect(x, y, previewRect.width - 20, 20), "Cost: " + cardData.ManaCost.ToString());
+            GUI.Label(new Rect(x, y, previewRect.width - 20, 20), "Cost: " + cardClone.ManaCost.ToString());
             y += 20;
-            GUI.Label(new Rect(x, y, previewRect.width - 20, 20), "Attack: " + cardData.Power.ToString());
+            GUI.Label(new Rect(x, y, previewRect.width - 20, 20), "Attack: " + cardClone.Power.ToString());
             y += 20;
-            GUI.Label(new Rect(x, y, previewRect.width - 20, 20), "Defense: " + cardData.defense.ToString());
+            GUI.Label(new Rect(x, y, previewRect.width - 20, 20), "Defense: " + cardClone.defense.ToString());
             y += 20;
-            string wrappedDescription = ("Description: " + cardData.Description).WrapText(45);
+            string wrappedDescription = ("Description: " + cardClone.Description).WrapText(45);
             float descriptionHeight = GUI.skin.label.CalcHeight(new GUIContent(wrappedDescription), previewRect.width - 20);
             GUI.Label(new Rect(x, y, previewRect.width - 20, descriptionHeight), wrappedDescription);
+        }
+    }
+
+    private void SaveCardData()
+    {
+        if (cardClone != null && cardData != null)
+        {
+            EditorUtility.CopySerialized(cardClone, cardData);
+            EditorUtility.SetDirty(cardData);
+            AssetDatabase.SaveAssets();
+        }
+    }
+
+    private void ResetCard()
+    {
+        if (cardClone != null && cardData != null)
+        {
+            cardClone = Instantiate(cardData);
+        }
+    }
+
+    private void Load()
+    {
+        string folderPath = EditorUtility.OpenFilePanel("Select Card", "Resources", "asset");
+
+        if (string.IsNullOrEmpty(folderPath))
+        {
+            Debug.Log("File dialog cancelled.");
+            return;
+        }
+
+        int resourcesIndex = folderPath.IndexOf("Resources");
+        string resourcePath = folderPath.Substring(resourcesIndex + "Resources".Length + 1);
+
+        cardData = Resources.Load<CardDataScriptable>(resourcePath.Split(".")[0]);
+
+        Debug.Log($"Loaded {resourcePath}");
+    }
+
+    private void GoToFile()
+    {
+        if (cardData != null)
+        {
+            string cardPath = AssetDatabase.GetAssetPath(cardData);
+            EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(cardPath, typeof(UnityEngine.Object)));
+        }
+    }
+
+    private void CreateNewCard()
+    {
+        string defaultName = "NewCard";
+        string defaultPath = "Assets/Resources";
+        string extension = "asset";
+        string fullPath = EditorUtility.SaveFilePanelInProject("Create New Card", defaultName, extension, "Enter a name for the new card.", defaultPath);
+
+        if (!string.IsNullOrEmpty(fullPath))
+        {
+            CardDataScriptable newCard = ScriptableObject.CreateInstance<CardDataScriptable>();
+            AssetDatabase.CreateAsset(newCard, fullPath);
+            AssetDatabase.SaveAssets();
+            Selection.activeObject = newCard;
+            newCard.Image = sprites[0];
+            SaveChanges();
+            cardData = newCard;
+            cardClone = Instantiate(newCard);
         }
     }
 }

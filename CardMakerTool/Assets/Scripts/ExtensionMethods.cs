@@ -61,7 +61,6 @@ public static class ExtensionMethods
     public static Color GetUnityEngineColor(this Colors cardColor)
     {
         string colorName = cardColor.ToString().ToLower();
-        Debug.Log(colorName);
         PropertyInfo propertyInfo = typeof(Color).GetProperty(colorName, BindingFlags.Static | BindingFlags.Public);
 
         if (propertyInfo != null)

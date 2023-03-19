@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62f9fa19af70fc64fad5323c5b350a84, type: 3}
-  m_Name: FirstCard
+  m_Name: NewCard7
   m_EditorClassIdentifier: 
-  CharacterName: Bob
+  CharacterName: 
   Color: 0
-  ManaCost: 150
-  Image: {fileID: 21300000, guid: 36979e49077ecb64a9382b882aaa3a14, type: 3}
-  Description: Bob is a pretty naughty knight
-  Power: 5
-  defense: 10
+  ManaCost: 0
+  Image: {fileID: 0}
+  Description: 
+  Power: 0
+  defense: 0
