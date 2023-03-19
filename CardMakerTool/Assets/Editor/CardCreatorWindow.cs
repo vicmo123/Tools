@@ -47,11 +47,12 @@ public class CardCreatorWindow : EditorWindow
         Vector2 editorSize = new Vector2(EditorWindow.focusedWindow.position.width, EditorWindow.focusedWindow.position.height);
 
         PrintControls();
+        CardDataScriptable previousCardData = cardData;
         cardData = EditorGUILayout.ObjectField("Card Data", cardData, typeof(CardDataScriptable), false) as CardDataScriptable;
 
         if (cardData != null)
         {
-            if (cardClone == null)
+            if (cardData != previousCardData || cardClone == null)
             {
                 cardClone = Instantiate(cardData);
             }
@@ -106,9 +107,13 @@ public class CardCreatorWindow : EditorWindow
         GUI.color = oldColor;
 
         //Center of screen
-        GUILayout.BeginArea(new Rect((editorSize.x - cardSize.x) / 2f, (editorSize.y - cardSize.y) * 3f / 4f, cardSize.x, cardSize.y));
+        GUILayout.BeginArea(new Rect((editorSize.x - cardSize.x) / 2f, (editorSize.y - cardSize.y) * 3f / 4f, cardSize.x, cardSize.y - 10));
         {
-            GUILayout.Label(cardClone.CharacterName);
+            GUIStyle boldCenteredStyle = new GUIStyle(GUI.skin.label);
+            boldCenteredStyle.fontStyle = FontStyle.Bold;
+            boldCenteredStyle.alignment = TextAnchor.MiddleCenter;
+            boldCenteredStyle.fontSize = 17;
+            GUILayout.Label(cardClone.CharacterName, boldCenteredStyle);
 
             PrintImageSelector();
             PrintCardInfo();
@@ -177,14 +182,18 @@ public class CardCreatorWindow : EditorWindow
 
     private void PrintCardInfo()
     {
-        GUILayout.Label("Card Info");
+        GUIStyle boldCenteredStyle = new GUIStyle(GUI.skin.label);
+        boldCenteredStyle.fontStyle = FontStyle.Bold;
+        boldCenteredStyle.alignment = TextAnchor.MiddleCenter;
+        boldCenteredStyle.fontSize = 13;
+        GUILayout.Label("- Card Info -", boldCenteredStyle);
+
         Rect previewRect = GUILayoutUtility.GetRect(cardSize.x, cardSize.y - 20);
         float spacing = 10;
         previewRect.x += spacing;
         previewRect.width -= spacing * 2;
         previewRect.height += 40;
 
-        
         if (Event.current.type == EventType.Repaint)
         {
             GUIStyle cardStyle = new GUIStyle(GUI.skin.box);
@@ -237,7 +246,7 @@ public class CardCreatorWindow : EditorWindow
         string resourcePath = folderPath.Substring(resourcesIndex + "Resources".Length + 1);
 
         cardData = Resources.Load<CardDataScriptable>(resourcePath.Split(".")[0]);
-
+        cardClone = Instantiate(cardData);
         Debug.Log($"Loaded {resourcePath}");
     }
 
