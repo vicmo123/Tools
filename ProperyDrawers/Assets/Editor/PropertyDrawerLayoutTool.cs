@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 using UnityEngine.UIElements;
+using System.Linq;
 
 namespace propertyDrawerTool
 {
@@ -89,7 +90,7 @@ namespace propertyDrawerTool
                     height = sizeAttr.height;
                 }
 
-                props[i] = new PropertyData(serializable.FindPropertyRelative(fields[i].Name), width, height, new GUIContent(fields[i].Name + ":"));
+                props[i] = new PropertyData(serializable.FindPropertyRelative(fields[i].Name), width, height, new GUIContent(fields[i].Name.SplitCamelCase() + ":"));
             }
 
             return props;
@@ -135,11 +136,29 @@ namespace propertyDrawerTool
             return prefixLabelWidth;
         }
 
-        public static Rect shrinkFromCenter(this Rect rect, float pourcentage)
+        //public static Rect shrinkFromCenter(this Rect rect, float pourcentage)
+        //{
+        //    pourcentage = Mathf.Clamp01(pourcentage);
+        //    Vector2 newPosition = new Vector2((rect.center.x - rect.width / 2) * pourcentage, (rect.center.y - rect.height / 2) * pourcentage);
+        //    return new Rect(newPosition.x, newPosition.y, rect.width * pourcentage, rect.height * pourcentage);
+        //}
+
+
+        public static string SplitCamelCase(this string text)
         {
-            pourcentage = Mathf.Clamp01(pourcentage);
-            Vector2 newPosition = new Vector2((rect.center.x - rect.width / 2) * pourcentage, (rect.center.y - rect.height / 2) * pourcentage);
-            return new Rect(newPosition.x, newPosition.y, rect.width * pourcentage, rect.height * pourcentage);
+            string splitted = "";
+            
+            string[] words = System.Text.RegularExpressions.Regex.Matches(text, "(^[a-z]+|[A-Z]+(?![a-z])|[A-Z][a-z]+)")
+                .OfType<System.Text.RegularExpressions.Match>()
+                .Select(m => m.Value)
+                .ToArray();
+
+            for (int i = 0; i < words.Length; i++)
+            {
+                splitted += words[i] + " ";
+            }
+
+            return splitted;
         }
     }
 
@@ -157,9 +176,6 @@ namespace propertyDrawerTool
             this.width = width;
             this.height = height;
             this.label = label;
-
-
-
 
             if(this.label == null)
             {
