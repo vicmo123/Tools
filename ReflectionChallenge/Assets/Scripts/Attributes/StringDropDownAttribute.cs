@@ -16,4 +16,17 @@ public class StringDropDownAttribute : PropertyAttribute
             stringOptions[i] = stringsToAdd[i];
         }
     }
+
+    public StringDropDownAttribute(bool showAllTypes)
+    {
+        if (showAllTypes)
+        {
+            var typeStrings = ReflectionHelper.GetAllTypeStrings();
+            stringOptions = new string[typeStrings.Length];
+            for (int i = 0; i < typeStrings.Length; i++)
+            {
+                stringOptions[i] = typeStrings[i];
+            }
+        }
+    }
 }

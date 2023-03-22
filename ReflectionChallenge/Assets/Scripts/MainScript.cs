@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public class MainScript : MonoBehaviour
@@ -12,6 +13,14 @@ public class MainScript : MonoBehaviour
     [StringDropDown("Canada", "France", "Mexico", "China", "Japan")]
     public string Country;
 
+    System.Action GameOverSequence = () => { };
+
+
+    [CustomRange(10, 100)]
+    public int MyIntField1;
+    [CustomRange(0, 5)]
+    public int MyIntField2;
+
     [ExposeMethodInEditor()]
     private void CheckForBadWords()
     {
@@ -21,5 +30,47 @@ public class MainScript : MonoBehaviour
         }
 
         BannedWordsHash.FindWordsInProject();
+    }
+
+    [ExposeMethodInEditor()]
+    private void CacheGameOverSequence()
+    {
+        MonoBehaviour[] allObjects = FindObjectsOfType<MonoBehaviour>();
+
+        foreach (MonoBehaviour obj in allObjects)
+        {
+            GameOverSequence += obj.GetMethodWithAttribute<CallOnGameOverAttribute>();
+        }
+    }
+
+    [ExposeMethodInEditor()]
+    private void GameOverTime()
+    {
+        GameOverSequence.Invoke();
+    }
+
+    [ExposeMethodInEditor()]
+    private void ShowcaseCustomRange()
+    {
+        MonoBehaviour[] allObjects = FindObjectsOfType<MonoBehaviour>();
+        allObjects.CheckAndFixCustomRangeValues();
+    }
+
+    static string[] choices = ReflectionHelper.GetAllTypeStrings();
+    [StringDropDown(true)]
+    public string typesToChoseFrom;
+
+    [ExposeMethodInEditor()]
+    public void ShowcaseDisplayClassInfo()
+    {
+        typesToChoseFrom.DisplayClassInfo();
+    }
+
+    private enum testEnum
+    {
+        bob,
+        joe,
+        john,
+        etc
     }
 }
