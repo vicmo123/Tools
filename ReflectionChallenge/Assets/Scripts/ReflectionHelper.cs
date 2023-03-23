@@ -4,7 +4,9 @@ using UnityEngine;
 using System;
 using System.Reflection;
 using System.Linq;
-
+using Random = UnityEngine.Random;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 public static class ReflectionHelper
 {
     static BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -106,60 +108,32 @@ public static class ReflectionHelper
         string classInfo = "";
         classInfo += "Class Information for type: " + type.FullName + "\n";
 
-        // Print the assembly information
+        //Print the assembly information
         Assembly assembly = type.Assembly;
         classInfo += "  " + "Assembly Name: " + assembly.FullName + "\n";
 
-        // Print the class information
+        //Print the class information
         classInfo += "  " + "Class Name: " + type.Name + "\n";
         classInfo += "  " + "Is Abstract: " + type.IsAbstract + "\n";
         classInfo += "  " + "Is Sealed: " + type.IsSealed + "\n";
         classInfo += "  " + "Is Generic Type Definition: " + type.IsGenericTypeDefinition + "\n";
         classInfo += "  " + "Is Class: " + type.IsClass + "\n";
 
-        // Print the fields information
+        //Print the fields information
         classInfo += "Fields: " + "\n";
         foreach (FieldInfo field in type.GetFields(bindingFlags))
         {
             classInfo += "  " + field.GetAccessLevel() + " " + field.FieldType + " " + field.Name + "\n";
         }
 
-        // Print the properties information
+        //Print the properties information
         classInfo += "Properties: " + "\n";
         foreach (PropertyInfo property in type.GetProperties(bindingFlags))
         {
             classInfo += "  " + property.GetAccessLevel() + " " + property.PropertyType + " " + property.Name + "\n";
         }
 
-        //// Print the enums information
-        //classInfo += "Enums: " + "\n";
-        //foreach (Type enumType in type.GetNestedTypes(BindingFlags.Public))
-        //{
-        //    if (enumType.IsEnum)
-        //    {
-        //        classInfo += "  " + "Enum: " + enumType.Name + "\n";
-        //        foreach (string enumName in Enum.GetNames(enumType))
-        //        {
-        //            classInfo += "  " + enumName + "\n";
-        //        }
-        //    }
-        //}
-
-        //// Print the structs information
-        //classInfo += "Structs: " + "\n";
-        //foreach (Type structType in type.GetNestedTypes(BindingFlags.Public))
-        //{
-        //    if (structType.IsValueType && !structType.IsEnum)
-        //    {
-        //        classInfo += "  " + "Struct: " + structType.Name + "\n";
-        //        foreach (FieldInfo field in structType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
-        //        {
-        //            classInfo += "  " + field.FieldType + " " + field.Name + "\n";
-        //        }
-        //    }
-        //}
-
-        // Print the methods information
+        //Print the methods information
         classInfo += "Methods:" + "\n";
         foreach (MethodInfo method in type.GetMethods(bindingFlags))
         {
@@ -258,6 +232,136 @@ public static class ReflectionHelper
         }
         //default value if member is neither a field nor a method
         return "unknown";
+    }
+
+    public static void FindAllFunctionsWithNumberOfParameter(int maxNumberOfParams)
+    {
+        var allTypes = Assembly.GetExecutingAssembly().GetTypes();
+        bool noMethodFound = true;
+
+        foreach (var t in allTypes)
+        {
+            var mInfos = t.GetMethods(bindingFlags);
+
+            foreach (var method in mInfos)
+            {
+                ParameterInfo[] parameters = method.GetParameters();
+                int numberOfParams = parameters.Length;
+                string methodInfoString = "";
+
+                if (numberOfParams >= maxNumberOfParams)
+                {
+                    noMethodFound = false;
+
+                    methodInfoString += "Invalid Method: {" + method.GetAccessLevel() + " " + method.ReturnType + " " + method.Name + "(";
+                    
+                    for (int i = 0; i < parameters.Length; i++)
+                    {
+                        methodInfoString += parameters[i].ParameterType + " " + parameters[i].Name;
+                        if (i < parameters.Length - 1) methodInfoString += ", ";
+                    }
+                    methodInfoString += ")}";
+
+                    Debug.Log(methodInfoString + " in type " + t.Name + " has " + maxNumberOfParams + " or more parameters. ");
+                }
+            }
+        }
+
+        if (noMethodFound)
+        {
+            Debug.Log("No methods have " + maxNumberOfParams + " or more parameters");
+        }
+    }
+
+    public static MonoBehaviour[] GetAllComponents(this GameObject go)
+    {
+        MonoBehaviour[] components = go.GetComponents<MonoBehaviour>();
+        return components;
+    }
+
+    public static FieldInfo[] GetAllFieldWithAttribute<T>(this MonoBehaviour component) where T : Attribute
+    {
+        List<FieldInfo> listFieldInfo= new List<FieldInfo>();
+
+        Type type = component.GetType();
+        var fields = type.GetFields(bindingFlags);
+
+        foreach (var field in fields)
+        {
+            T attr = (T)field.GetCustomAttribute(typeof(T), false);
+            if(attr != null)
+            {
+                listFieldInfo.Add(field);
+            }
+        }
+
+        return listFieldInfo.ToArray();
+    }
+
+    public static void Randomizer(this MonoBehaviour mono)
+    {
+        Type[] typesToRandomize = { typeof(int), typeof(float), typeof(Vector2) };
+
+        StackFrame callingFrame = new StackFrame(1, true);
+        MethodBase callingMethod = callingFrame.GetMethod();
+        object callingInstance = callingFrame.GetMethod().IsStatic ? null : callingFrame.GetMethod().ReflectedType;
+
+        if (callingInstance != null)
+        {
+            Type type = Type.GetType(callingInstance.ToString());
+            var fields = type.GetFields(bindingFlags);
+            var properties = type.GetProperties(bindingFlags);
+
+            foreach (var f in fields)
+            {
+                foreach (var t in typesToRandomize)
+                {
+                    if(f.FieldType == t)
+                    {
+                        Debug.Log(f.Name + ": " + f.GetValue(mono));
+                        Debug.Log("Randomize...");
+                        if (t == typeof(int))
+                        {
+                            f.SetValue(mono, (int)Random.Range(0, 100));
+                        }
+                        else if (t == typeof(float))
+                        {
+                            f.SetValue(mono, (float)Random.Range(0f, 100f));
+                        }
+                        else if (t == typeof(Vector2))
+                        {
+                            f.SetValue(mono, new Vector2((float)Random.Range(-100f, 100f), (float)Random.Range(-100f, 100f)));
+                        }
+                        Debug.Log(f.Name + ": " + f.GetValue(mono));
+                    }
+                } 
+            }
+
+            foreach (var p in properties)
+            {
+                foreach (var t in typesToRandomize)
+                {
+                    if (p.PropertyType == t)
+                    {
+                        Debug.Log(p.Name + ": " + p.GetValue(mono));
+                        Debug.Log("Randomize...");
+                        if (t == typeof(int))
+                        {
+                            p.SetValue(mono, (int)Random.Range(0, 100));
+                        }
+                        else if (t == typeof(float))
+                        {
+                            p.SetValue(mono, (float)Random.Range(0f, 100f));
+                        }
+                        else if (t == typeof(Vector2))
+                        {
+                            p.SetValue(mono, new Vector2((float)Random.Range(-100f, 100f), (float)Random.Range(-100f, 100f)));
+                        }
+                        Debug.Log(p.Name + ": " + p.GetValue(mono));
+                    }
+                }
+            }
+        }
     }
 }
 

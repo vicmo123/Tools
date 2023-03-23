@@ -15,7 +15,8 @@ public class MainScript : MonoBehaviour
 
     System.Action GameOverSequence = () => { };
 
-
+    public int MaxNumberOfParameters = 0;
+        
     [CustomRange(10, 100)]
     public int MyIntField1;
     [CustomRange(0, 5)]
@@ -66,11 +67,27 @@ public class MainScript : MonoBehaviour
         typesToChoseFrom.DisplayClassInfo();
     }
 
-    private enum testEnum
+    [ExposeMethodInEditor()]
+    public void FindAllMethodsThatHaveOverNParams()
     {
-        bob,
-        joe,
-        john,
-        etc
+        ReflectionHelper.FindAllFunctionsWithNumberOfParameter(MaxNumberOfParameters);
+    }
+
+    [ExposeMethodInEditor()]
+    public void LinkAll()
+    {
+        MonoBehaviour[] allObjects = FindObjectsOfType<MonoBehaviour>();
+
+        foreach (MonoBehaviour obj in allObjects)
+        {
+            CustomEventSystem.Register(obj.GetMethodWithAttribute<CustomEventAttribute>());
+        }
+        Debug.Log("Events Linked");
+    }
+
+    [ExposeMethodInEditor()]
+    public void InvokeEventSystem()
+    {
+        CustomEventSystem.InvokeAllEvents();
     }
 }

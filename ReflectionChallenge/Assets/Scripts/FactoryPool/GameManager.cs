@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < prefillAmount; i++)
         {
-            EnemyData data = EnemyData.GenerateData();
+            EnemyData data = EnemyData.ResetWithAttribute();
             Enemy newEnemy = enemySystem.objectFactory.CreateObject(data.Type, data);
             enemySystem.objectPool.Pool(newEnemy.GetEnumType(), newEnemy);
         }
